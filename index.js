@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 const app = express();
 const port = 3000;
 const baseURL = "http://api.openweathermap.org/geo/1.0/";
-const ApiKey = "fc4ffb292b93e607dd3bfad05b1afd4c";
+const ApiKey = process.env.WEATHER_API_KEY;
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -26,18 +26,18 @@ app.get("/about", (req, res) => {
     const city = req.body.cityname;
   
     try {
-      // Fetch geocoding data
+      // Fetching geocoding data
       const geoResponse = await axios.get(`${baseURL}direct?q=${city}&appid=${ApiKey}`);
   
-      // Check if any cities were returned
+      // Checking if any cities were returned
       if (geoResponse.data.length === 0) {
         throw new Error("No matching city found.");
       }
   
-      // Get the first suggestion from OpenWeatherMap's response
+      // Getting the first suggestion from OpenWeatherMap's response
       const { lat, lon, name, state, country } = geoResponse.data[0];
   
-      // Fetch weather data for the first city match
+      // Fetching weather data for the first city match
       const weatherResponse = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${ApiKey}&units=metric`
       );
